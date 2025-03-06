@@ -17,7 +17,19 @@ class MedicalCodingExtractor:
     def __init__(self, api_key: str = GROQ_API_KEY):
         if not api_key:
             raise ValueError("API key must be provided")
-        self.groq_client = groq.Groq(api_key=api_key)
+        try:
+            # Try to initialize without any extra parameters
+            self.groq_client = groq.Groq(api_key=api_key)
+        except TypeError as e:
+            # If there's a TypeError about unexpected arguments, try with base_url only
+            if 'proxies' in str(e):
+                print("Warning: Proxy settings detected but not supported. Initializing without proxies.")
+                self.groq_client = groq.Groq(
+                    api_key=api_key,
+                    base_url="https://api.groq.com/openai/v1"
+                )
+            else:
+                raise
         
     def process_ehr_document(self, ehr_text: str) -> dict:
         """
