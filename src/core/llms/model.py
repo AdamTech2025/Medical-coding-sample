@@ -60,61 +60,45 @@ class MedicalCodingExtractor:
     def _extract_codes_from_text(self, text: str) -> str:
         """Extract medical codes directly from text using Groq"""
         try:
-            prompt = f"""As a medical coding expert, analyze this clinical text and extract all relevant ICD-10 and CPT codes.
+            prompt = f"""As a medical coding expert, analyze this clinical text and extract all relevant ICD-10-CM and CPT codes.
 
 Clinical text: "{text}"
 
-Provide a detailed analysis with proper formatting and alignment. Follow this exact format:
+Provide a detailed analysis with proper formatting. Follow this exact format:
 
-=== Medical Conditions Found ===
-1. [Condition Name] ([ICD-10 Code] - [Description])
-   • Detailed explanation or notes about the condition
-   • Additional relevant information if applicable
+CPT Codes:
+o [CODE] – [DESCRIPTION]
+o [CODE] – [DESCRIPTION]
 
-2. [Condition Name] ([ICD-10 Code] - [Description])
-   • Detailed explanation or notes about the condition
-   • Additional relevant information if applicable
+ICD-10-CM Code:
+o [CODE] – [DESCRIPTION]
 
-=== Medical Procedures Performed ===
-1. [Procedure Name] ([CPT Code] - [Description])
-   • Purpose and details of the procedure
-   • Additional relevant information if applicable
+Explanation:
+o [CPT CODE]: Detailed explanation of why this code was selected, including any measurements, anatomical considerations, or other relevant factors.
+o [CPT CODE]: Detailed explanation for this code, including any clarifications or corrections if needed.
+o Diagnosis ([ICD-10 CODE]): Explanation of the diagnosis code selection with specifics about location, type, etc.
 
-2. [Procedure Name] ([CPT Code] - [Description])
-   • Purpose and details of the procedure
-   • Additional relevant information if applicable
-
-=== Additional Notes ===
-• Any relevant updates to codes or special considerations
-• Any other important clinical context
-
-Example output:
-=== Medical Conditions Found ===
-1. Severe Persistent Asthma (J45.50 - Severe persistent asthma)
-   • Characterized by continuous symptoms
-   • Significant airflow limitation present
-
-2. Type 2 Diabetes (E11.9 - Type 2 diabetes mellitus without complications)
-   • No specified complications noted
-   • Routine monitoring recommended
-
-=== Medical Procedures Performed ===
-1. Spirometry (94010 - Spirometry complete)
-   • Comprehensive pulmonary function testing
-   • Used to assess severity of airflow obstruction
-
-2. HbA1c Test (82950 - Glucose test, post-glucose dose)
-   • Glycemic control assessment
-   • Standard diabetes monitoring procedure
-
-=== Additional Notes ===
-• All codes verified against current year's updates
-• Follow-up recommended in 3 months"""
+Be precise, technical, and follow coding guidelines exactly. Include measurements, anatomical considerations, and any necessary corrections or clarifications in your explanations."""
             
             completion = self.groq_client.chat.completions.create(
                 model="mixtral-8x7b-32768",
                 messages=[
-                    {"role": "system", "content": "You are a medical coding expert specializing in ICD-10 and CPT code extraction. Format your responses with precise alignment and clear section breaks."},
+                    {"role": "system", "content": """You are a medical coding expert specializing in ICD-10-CM and CPT code extraction. 
+Format your responses exactly as follows:
+
+CPT Codes:
+o [CODE] – [DESCRIPTION]
+o [CODE] – [DESCRIPTION]
+
+ICD-10-CM Code:
+o [CODE] – [DESCRIPTION]
+
+Explanation:
+o [CODE]: Detailed explanation of why this code was selected, including any measurements, anatomical considerations, or other relevant factors.
+o [CODE]: Detailed explanation for this code, including any clarifications or corrections if needed.
+o Diagnosis ([CODE]): Explanation of the diagnosis code selection with specifics about location, type, etc.
+
+Be precise, technical, and follow coding guidelines exactly."""},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.1,

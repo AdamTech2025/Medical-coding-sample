@@ -328,9 +328,31 @@
             white-space: pre-wrap;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             line-height: 1.6;
-            padding: 1rem;
+            padding: 1.5rem;
             background: var(--light-bg);
             border-radius: var(--border-radius);
+        }
+
+        .result-section .content p {
+            margin-bottom: 1rem;
+        }
+
+        .result-section .content p:first-child,
+        .result-section .content p:nth-child(3) {
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-section .content p:nth-child(5) {
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            margin-top: 1.5rem;
         }
 
         .result-section h3 {
@@ -342,10 +364,6 @@
 
         .result-section h3 i {
             font-size: 1.1rem;
-        }
-
-        .result-section .content p {
-            margin-bottom: 1.5rem;
         }
 
         .result-section .content p:last-child {
@@ -437,8 +455,8 @@
                 </div>
                 {% elif result %}
                 <div class="result-section">
-                    <h3><i class="fas fa-heartbeat"></i> Medical Conditions Found</h3>
-                    <div class="content">
+                    <h3><i class="fas fa-file-medical-alt"></i> Medical Coding Results</h3>
+                    <div class="content" id="resultContent">
                         {{ result|linebreaks|safe }}
                     </div>
                 </div>
@@ -479,10 +497,10 @@ Prescribed albuterol inhaler and metformin.`;
         }
 
         function copyResults() {
-            const resultJson = document.getElementById('resultJson');
+            const resultContent = document.getElementById('resultContent');
             const copyButton = document.getElementById('copyButton');
             
-            navigator.clipboard.writeText(resultJson.textContent)
+            navigator.clipboard.writeText(resultContent.textContent)
                 .then(() => {
                     const originalText = copyButton.innerHTML;
                     copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
