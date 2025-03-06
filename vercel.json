@@ -1,18 +1,19 @@
 {
     "builds": [
         {
-            "src": "src/medical/wsgi.py",
+            "src": "src/wsgi.py",
             "use": "@vercel/python"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "src/medical/wsgi.py"
+            "dest": "src/wsgi.py"
         }
     ],
     "env": {
-        "DJANGO_SETTINGS_MODULE": "medical.settings",
-        "ALLOWED_HOSTS": ".vercel.app"
+        "DJANGO_SETTINGS_MODULE": "src.medical.settings",
+        "ALLOWED_HOSTS": ".vercel.app",
+        "PYTHONPATH": "."
     }
 } 
