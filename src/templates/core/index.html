@@ -333,6 +333,17 @@
             border-radius: var(--border-radius);
         }
 
+        .result-section h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-section h3 i {
+            font-size: 1.1rem;
+        }
+
         .result-section .content p {
             margin-bottom: 1rem;
         }
@@ -353,21 +364,6 @@
             padding-bottom: 0.5rem;
             margin-bottom: 1rem;
             margin-top: 1.5rem;
-        }
-
-        .result-section h3 {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .result-section h3 i {
-            font-size: 1.1rem;
-        }
-
-        .result-section .content p:last-child {
-            margin-bottom: 0;
         }
 
         .result-section .content ul {
@@ -455,8 +451,8 @@
                 </div>
                 {% elif result %}
                 <div class="result-section">
-                    <h3><i class="fas fa-file-medical-alt"></i> Medical Coding Results</h3>
-                    <div class="content" id="resultContent">
+                    <h3><i class="fas fa-heartbeat"></i> Medical Conditions Found</h3>
+                    <div class="content">
                         {{ result|linebreaks|safe }}
                     </div>
                 </div>
