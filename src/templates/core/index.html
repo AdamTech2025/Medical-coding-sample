@@ -85,20 +85,122 @@
 
         .result-section {
             margin-bottom: 2rem;
-        }
-
-        .result-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .result-section h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding: 0.5rem 1rem;
-            background: var(--primary-color);
-            color: white;
+            background: white;
             border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .result-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M19 10h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V11a1 1 0 0 1 1-1h1V9a7 7 0 1 1 14 0v1zm-2 0V9A5 5 0 0 0 7 9v1h10zm-6 4v4h2v-4h-2z' fill='rgba(37,99,235,0.05)'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right top;
+            background-size: 150px;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .result-section-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .result-section-title {
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .result-section-title i {
+            color: var(--primary-color);
+        }
+
+        .result-section-content {
+            position: relative;
+            z-index: 2;
+            padding: 1.5rem;
+            white-space: pre-wrap;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+        }
+
+        .result-section-content p {
+            margin-bottom: 1rem;
+        }
+
+        .result-section-content p:first-child,
+        .result-section-content p:nth-child(3),
+        .result-section-content p:nth-child(5) {
+            font-weight: 700;
+            color: #2c3e50;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .result-section-content p:first-child::before,
+        .result-section-content p:nth-child(3)::before,
+        .result-section-content p:nth-child(5)::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -2px;
+            width: 50px;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .result-section-content p:nth-child(3) {
+            margin-top: 2rem;
+        }
+
+        .result-section-content p:nth-child(5) {
+            margin-top: 2rem;
+        }
+
+        .result-section-content p:nth-child(2),
+        .result-section-content p:nth-child(4) {
+            padding-left: 1.5rem;
+            position: relative;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: #495057;
+            line-height: 1.8;
+        }
+
+        .result-section-content p:nth-child(6),
+        .result-section-content p:nth-child(7),
+        .result-section-content p:nth-child(8) {
+            position: relative;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 3px solid rgba(37, 99, 235, 0.3);
+        }
+
+        .result-section-content strong,
+        .result-section-content b {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .result-section ol {
@@ -324,59 +426,87 @@
             font-weight: 500;
         }
 
-        .result-section .content {
-            white-space: pre-wrap;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            line-height: 1.6;
-            padding: 1.5rem;
-            background: var(--light-bg);
-            border-radius: var(--border-radius);
+        /* Updated print styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .result-section, .result-section * {
+                visibility: visible;
+            }
+            .result-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 0;
+                box-shadow: none;
+            }
+            .result-section::before {
+                display: none;
+            }
+            .result-section-header {
+                border-bottom: 2px solid #000;
+                background: none;
+            }
+            .result-metadata {
+                background: none;
+                border-bottom: 1px solid #000;
+                padding: 0.5rem 0;
+                margin: 0 1.5rem;
+                width: calc(100% - 3rem);
+            }
+            .result-actions {
+                display: none;
+            }
+            .result-section-content p:first-child::before,
+            .result-section-content p:nth-child(3)::before,
+            .result-section-content p:nth-child(5)::before {
+                background-color: #000;
+            }
+            .result-section-content p:nth-child(6),
+            .result-section-content p:nth-child(7),
+            .result-section-content p:nth-child(8) {
+                background: none;
+                border: 1px solid #000;
+            }
         }
 
-        .result-section h3 {
+        /* Button styles */
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .result-metadata {
+            padding: 0.75rem 1.5rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .result-metadata-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
+            gap: 0.5rem;
         }
 
-        .result-section h3 i {
-            font-size: 1.1rem;
-        }
-
-        .result-section .content p {
-            margin-bottom: 1rem;
-        }
-
-        .result-section .content p:first-child,
-        .result-section .content p:nth-child(3) {
+        .result-metadata-label {
             font-weight: 600;
-            color: var(--primary-color);
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
         }
 
-        .result-section .content p:nth-child(5) {
-            font-weight: 600;
-            color: var(--primary-color);
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .result-section .content ul {
-            margin: 0;
-            padding-left: 1.5rem;
-        }
-
-        .result-section .content ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .result-section .content ul li:last-child {
-            margin-bottom: 0;
+        .result-metadata-value {
+            font-family: 'JetBrains Mono', monospace;
         }
     </style>
 </head>
@@ -439,9 +569,14 @@
                     <i class="fas fa-file-medical-alt"></i> Coded Medical Data
                 </div>
                 {% if result %}
-                <button class="btn btn-secondary" onclick="copyResults()" id="copyButton">
-                    <i class="fas fa-copy"></i> Copy Results
-                </button>
+                <div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="copyResults()">
+                        <i class="fas fa-copy"></i> Copy Results
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary ms-2" onclick="printResults()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
                 {% endif %}
             </div>
             <div class="card-body">
@@ -451,8 +586,30 @@
                 </div>
                 {% elif result %}
                 <div class="result-section">
-                    <h3><i class="fas fa-heartbeat"></i> Medical Conditions Found</h3>
-                    <div class="content">
+                    <div class="result-section-header">
+                        <div class="result-section-title">
+                            <i class="fas fa-file-medical-alt"></i> Medical Coding Results
+                        </div>
+                        <div class="result-actions">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="copyResults()" id="copyButton">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button class="btn btn-sm btn-outline-primary ms-2" onclick="printResults()">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                        </div>
+                    </div>
+                    <div class="result-metadata">
+                        <div class="result-metadata-item">
+                            <span class="result-metadata-label">Document ID:</span>
+                            <span class="result-metadata-value" id="documentId"></span>
+                        </div>
+                        <div class="result-metadata-item">
+                            <span class="result-metadata-label">Generated:</span>
+                            <span class="result-metadata-value" id="timestamp"></span>
+                        </div>
+                    </div>
+                    <div class="result-section-content" id="resultContent">
                         {{ result|linebreaks|safe }}
                     </div>
                 </div>
@@ -484,9 +641,44 @@ Prescribed albuterol inhaler and metformin.</code>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const sampleData = `Patient presented with severe persistent asthma and type 2 diabetes.
-Performed spirometry test and HbA1c blood test.
-Prescribed albuterol inhaler and metformin.`;
+        const sampleData = `A 55-year-old male has a 0.9 cm basal cell carcinoma on the right arm. The dermatologist
+performs an excision with 0.5 cm margins and closes the defect with a simple repair measuring
+1.9 cm in length. Pathology confirms the diagnosis.
+Task: Assign the correct CPT and ICD-10-CM codes for this encounter`;
+
+        // Generate a random document ID
+        function generateDocumentId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let id = 'MCA-';
+            for (let i = 0; i < 8; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        }
+
+        // Format current date and time
+        function formatTimestamp() {
+            const now = new Date();
+            return now.toLocaleString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Set document metadata if results are present
+        document.addEventListener('DOMContentLoaded', function() {
+            const documentIdElement = document.getElementById('documentId');
+            const timestampElement = document.getElementById('timestamp');
+            
+            if (documentIdElement && timestampElement) {
+                documentIdElement.textContent = generateDocumentId();
+                timestampElement.textContent = formatTimestamp();
+            }
+        });
 
         function loadSampleData() {
             document.getElementById('clinicalDataInput').value = sampleData;
@@ -494,12 +686,12 @@ Prescribed albuterol inhaler and metformin.`;
 
         function copyResults() {
             const resultContent = document.getElementById('resultContent');
-            const copyButton = document.getElementById('copyButton');
+            const copyButton = document.querySelector('#copyButton');
             
             navigator.clipboard.writeText(resultContent.textContent)
                 .then(() => {
                     const originalText = copyButton.innerHTML;
-                    copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    copyButton.innerHTML = '<i class="fas fa-check"></i> Copied';
                     setTimeout(() => {
                         copyButton.innerHTML = originalText;
                     }, 2000);
@@ -507,6 +699,10 @@ Prescribed albuterol inhaler and metformin.`;
                 .catch(err => {
                     console.error('Failed to copy:', err);
                 });
+        }
+
+        function printResults() {
+            window.print();
         }
 
         document.getElementById('clinicalDataInput').addEventListener('keydown', function(e) {

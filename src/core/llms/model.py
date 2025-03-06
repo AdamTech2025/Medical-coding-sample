@@ -81,7 +81,7 @@ o Diagnosis ([ICD-10 CODE]): Explanation of the diagnosis code selection with sp
 Be precise, technical, and follow coding guidelines exactly. Include measurements, anatomical considerations, and any necessary corrections or clarifications in your explanations."""
             
             completion = self.groq_client.chat.completions.create(
-                model="mixtral-8x7b-32768",
+                model="llama-3.3-70b-specdec",
                 messages=[
                     {"role": "system", "content": """You are a medical coding expert specializing in ICD-10-CM and CPT code extraction. 
 Format your responses exactly as follows:
