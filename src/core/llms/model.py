@@ -1,4 +1,4 @@
-import groq
+import openai
 import json
 from datetime import datetime
 from django.conf import settings
@@ -9,27 +9,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get API key from environment variables
-GROQ_API_KEY = os.getenv('GROQ_DEEPSEEK_API_KEY')
-if not GROQ_API_KEY:
-    raise ValueError("GROQ_API_KEY environment variable must be set")
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY environment variable must be set")
 
 class MedicalCodingExtractor:
-    def __init__(self, api_key: str = GROQ_API_KEY):
+    def __init__(self, api_key: str = OPENAI_API_KEY):
         if not api_key:
             raise ValueError("API key must be provided")
-        try:
-            # Try to initialize without any extra parameters
-            self.groq_client = groq.Groq(api_key=api_key)
-        except TypeError as e:
-            # If there's a TypeError about unexpected arguments, try with base_url only
-            if 'proxies' in str(e):
-                print("Warning: Proxy settings detected but not supported. Initializing without proxies.")
-                self.groq_client = groq.Groq(
-                    api_key=api_key,
-                    base_url="https://api.groq.com/openai/v1"
-                )
-            else:
-                raise
+        self.client = openai.OpenAI(api_key=api_key)
         
     def process_ehr_document(self, ehr_text: str) -> dict:
         """
@@ -58,51 +46,58 @@ class MedicalCodingExtractor:
             }
     
     def _extract_codes_from_text(self, text: str) -> str:
-        """Extract medical codes directly from text using Groq"""
+        """Extract medical codes directly from text using GPT-4"""
         try:
-            prompt = f"""As a medical coding expert, analyze this clinical text and extract all relevant ICD-10-CM and CPT codes.
+            prompt = f"""As a medical coding expert, analyze this clinical text and extract all relevant CPT codes with high precision. Focus on accurate procedure code selection based on the exact procedures described.
 
 Clinical text: "{text}"
 
-Provide a detailed analysis with proper formatting. Follow this exact format:
+IMPORTANT CPT CODE SELECTION GUIDELINES:
+- For excision of benign tumor or cyst of mandible by enucleation and/or curettage, use 21040
+- For application of interdental fixation device, use 21110
+- Use the most specific code that fully describes the procedure performed
+- Consider anatomical site, approach, technique, and complexity
+- Refer to official CPT code descriptions for accurate selection
 
-CPT Codes:
-o [CODE] – [DESCRIPTION]
-o [CODE] – [DESCRIPTION]
+Please provide your analysis in this format:
 
-ICD-10-CM Code:
-o [CODE] – [DESCRIPTION]
+CPT CODES:
+[CODE] – [EXACT OFFICIAL DESCRIPTION] (Source: AMA CPT®)
+- Detailed justification for why this specific code matches the procedure described
+- Evidence from the clinical text that supports this code selection
+- Any relevant anatomical considerations or technical aspects
 
-Explanation:
-o [CPT CODE]: Detailed explanation of why this code was selected, including any measurements, anatomical considerations, or other relevant factors.
-o [CPT CODE]: Detailed explanation for this code, including any clarifications or corrections if needed.
-o Diagnosis ([ICD-10 CODE]): Explanation of the diagnosis code selection with specifics about location, type, etc.
+RATIONALE:
+- Clear explanation connecting the clinical scenario to the selected CPT code(s)
+- Identification of key procedure components that determined code selection
+- Explanation of why alternative codes were not selected (if relevant)
 
-Be precise, technical, and follow coding guidelines exactly. Include measurements, anatomical considerations, and any necessary corrections or clarifications in your explanations."""
+Note: Ensure complete accuracy in code selection. When in doubt between similar codes, explain the distinction and why one code is more appropriate than another."""
             
-            completion = self.groq_client.chat.completions.create(
-                model="llama-3.3-70b-specdec",
+            completion = self.client.chat.completions.create(
+                model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": """You are a medical coding expert specializing in ICD-10-CM and CPT code extraction. 
-Format your responses exactly as follows:
+                    {"role": "system", "content": """You are an expert medical coder specializing in CPT coding for medical procedures. Your task is to:
 
-CPT Codes:
-o [CODE] – [DESCRIPTION]
-o [CODE] – [DESCRIPTION]
+1. Carefully analyze clinical scenarios to identify exactly what procedures were performed
+2. Select the most specific and accurate CPT code(s) for those procedures
+3. Provide the exact official CPT code description from the AMA
+4. Justify your code selection with clear references to the clinical text
+5. Prioritize accuracy over comprehensiveness - it's better to provide fewer, highly accurate codes than many questionable ones
+6. Pay special attention to anatomical details, approach method, and procedure complexity
+7. When similar codes exist (e.g., 21040 vs 21110), clearly explain why one is more appropriate
 
-ICD-10-CM Code:
-o [CODE] – [DESCRIPTION]
+COMMON CPT CODE REFERENCE:
+- 21040: Excision of benign tumor or cyst of mandible, by enucleation and/or curettage
+- 21110: Application of interdental fixation device for conditions other than fracture or dislocation
+- 31231: Nasal endoscopy, diagnostic, unilateral or bilateral
+- 99213: Office or other outpatient visit, established patient, low to moderate complexity
 
-Explanation:
-o [CODE]: Detailed explanation of why this code was selected, including any measurements, anatomical considerations, or other relevant factors.
-o [CODE]: Detailed explanation for this code, including any clarifications or corrections if needed.
-o Diagnosis ([CODE]): Explanation of the diagnosis code selection with specifics about location, type, etc.
-
-Be precise, technical, and follow coding guidelines exactly."""},
+Always start by identifying the exact procedure(s) performed and match to the most specific code."""},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.1,
-                max_tokens=1000
+                temperature=0.1,  # Very low temperature for consistent, accurate responses
+                max_tokens=2000   # Significantly increased token limit for comprehensive responses
             )
             
             response = completion.choices[0].message.content.strip()

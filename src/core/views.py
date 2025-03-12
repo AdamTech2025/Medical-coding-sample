@@ -5,7 +5,7 @@ from django.conf import settings
 import json
 import os
 from dotenv import load_dotenv
-from .llms.model import MedicalCodingExtractor, GROQ_API_KEY
+from .llms.model import MedicalCodingExtractor, OPENAI_API_KEY
 
 load_dotenv()
 
@@ -22,8 +22,8 @@ def index(request):
             if not clinical_text:
                 context['error'] = 'No clinical text provided'
             else:
-                # Initialize the extractor with Groq
-                extractor = MedicalCodingExtractor(api_key=GROQ_API_KEY)
+                # Initialize the extractor with OpenAI
+                extractor = MedicalCodingExtractor(api_key=OPENAI_API_KEY)
                 
                 # Process the document
                 result = extractor.process_ehr_document(clinical_text)
@@ -53,8 +53,8 @@ def process_medical_text(request):
         if not clinical_text:
             return JsonResponse({'error': 'No clinical text provided'}, status=400)
             
-        # Initialize the extractor with Groq
-        extractor = MedicalCodingExtractor(api_key=GROQ_API_KEY)
+        # Initialize the extractor with OpenAI
+        extractor = MedicalCodingExtractor(api_key=OPENAI_API_KEY)
         
         # Process the document
         result = extractor.process_ehr_document(clinical_text)
