@@ -144,8 +144,7 @@
         }
 
         .result-section-content p:first-child,
-        .result-section-content p:nth-child(3),
-        .result-section-content p:nth-child(5) {
+        .result-section-content p:nth-child(3) {
             font-weight: 700;
             color: #2c3e50;
             border-bottom: 2px solid #e9ecef;
@@ -156,8 +155,7 @@
         }
 
         .result-section-content p:first-child::before,
-        .result-section-content p:nth-child(3)::before,
-        .result-section-content p:nth-child(5)::before {
+        .result-section-content p:nth-child(3)::before {
             content: "";
             position: absolute;
             left: 0;
@@ -165,14 +163,6 @@
             width: 50px;
             height: 2px;
             background-color: var(--primary-color);
-        }
-
-        .result-section-content p:nth-child(3) {
-            margin-top: 2rem;
-        }
-
-        .result-section-content p:nth-child(5) {
-            margin-top: 2rem;
         }
 
         .result-section-content p:nth-child(2),
@@ -183,6 +173,18 @@
             font-size: 0.95rem;
             color: #495057;
             line-height: 1.8;
+            font-weight: 700;
+        }
+
+        .result-section-content p:nth-child(5) {
+            font-weight: normal;
+            color: #2c3e50;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            position: relative;
+            margin-top: 2rem;
         }
 
         .result-section-content p:nth-child(6),
@@ -194,13 +196,19 @@
             border-radius: 8px;
             margin-bottom: 1rem;
             border-left: 3px solid rgba(37, 99, 235, 0.3);
+            font-weight: normal;
         }
 
-        .result-section-content strong,
-        .result-section-content b {
+        .result-section-content code {
+            font-weight: 700;
             color: var(--primary-color);
-            font-weight: 600;
-            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .result-section-content strong {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
         }
 
         .result-section ol {

@@ -48,56 +48,58 @@ class MedicalCodingExtractor:
     def _extract_codes_from_text(self, text: str) -> str:
         """Extract medical codes directly from text using GPT-4"""
         try:
-            prompt = f"""As a medical coding expert, analyze this clinical text and extract all relevant CPT codes with high precision. Focus on accurate procedure code selection based on the exact procedures described.
+            prompt = f"""As a medical coding expert, analyze this clinical text and extract all relevant ICD-10-CM and CDT codes. Provide accurate codes with verified descriptions.
 
 Clinical text: "{text}"
 
-IMPORTANT CPT CODE SELECTION GUIDELINES:
-- For excision of benign tumor or cyst of mandible by enucleation and/or curettage, use 21040
-- For application of interdental fixation device, use 21110
-- Use the most specific code that fully describes the procedure performed
-- Consider anatomical site, approach, technique, and complexity
-- Refer to official CPT code descriptions for accurate selection
+Please provide your analysis in this EXACT format:
 
-Please provide your analysis in this format:
+ICD-10-CM (Diagnosis):
+[CODE] – [DESCRIPTION]
+(List each diagnosis code on a new line)
 
-CPT CODES:
-[CODE] – [EXACT OFFICIAL DESCRIPTION] (Source: AMA CPT®)
-- Detailed justification for why this specific code matches the procedure described
-- Evidence from the clinical text that supports this code selection
-- Any relevant anatomical considerations or technical aspects
+CDT/CPT (Procedure):
+[CODE] – [DESCRIPTION]
+(List each procedure code on a new line)
 
-RATIONALE:
-- Clear explanation connecting the clinical scenario to the selected CPT code(s)
-- Identification of key procedure components that determined code selection
-- Explanation of why alternative codes were not selected (if relevant)
+Explanation:
+1. Diagnosis Codes:
+- [CODE]: Detailed explanation of why this diagnosis code was selected
+(Provide explanation for each diagnosis code)
 
-Note: Ensure complete accuracy in code selection. When in doubt between similar codes, explain the distinction and why one code is more appropriate than another."""
+2. Procedure Codes:
+- [CODE]: Detailed explanation of why this procedure code was selected, including any relevant measurements, anatomical considerations, or other factors
+(Provide explanation for each procedure code)
+
+Note: Ensure all codes are current and verified. Include only codes that are explicitly supported by the clinical documentation."""
             
             completion = self.client.chat.completions.create(
-                model="gpt-4o",
+                model="o1-preview",
                 messages=[
-                    {"role": "system", "content": """You are an expert medical coder specializing in CPT coding for medical procedures. Your task is to:
+                    {"role": "system", "content": """You are an expert medical coder specializing in ICD-10-CM and CDT/CPT coding. Your task is to:
 
-1. Carefully analyze clinical scenarios to identify exactly what procedures were performed
-2. Select the most specific and accurate CPT code(s) for those procedures
-3. Provide the exact official CPT code description from the AMA
-4. Justify your code selection with clear references to the clinical text
-5. Prioritize accuracy over comprehensiveness - it's better to provide fewer, highly accurate codes than many questionable ones
-6. Pay special attention to anatomical details, approach method, and procedure complexity
-7. When similar codes exist (e.g., 21040 vs 21110), clearly explain why one is more appropriate
+1. First identify all documented diagnoses and procedures
+2. Select the most specific and accurate codes
+3. Format the response exactly as requested with clear separation between diagnoses and procedures
+4. Provide detailed explanations for each code selection
+5. Only include codes that are explicitly supported by the documentation
+6. Use official code descriptions
+7. Verify all codes are current and active
 
-COMMON CPT CODE REFERENCE:
-- 21040: Excision of benign tumor or cyst of mandible, by enucleation and/or curettage
-- 21110: Application of interdental fixation device for conditions other than fracture or dislocation
-- 31231: Nasal endoscopy, diagnostic, unilateral or bilateral
-- 99213: Office or other outpatient visit, established patient, low to moderate complexity
+Common Dental/Medical Code References:
+- D2391: Resin-based composite - one surface, posterior
+- D2392: Resin-based composite - two surfaces, posterior
+- D2393: Resin-based composite - three surfaces, posterior
+- D2394: Resin-based composite - four or more surfaces, posterior
+- K02.9: Dental caries, unspecified
+- K04.0: Pulpitis
+- K04.7: Periapical abscess without sinus
 
-Always start by identifying the exact procedure(s) performed and match to the most specific code."""},
+Always ensure codes match the documented conditions and procedures exactly."""},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.1,  # Very low temperature for consistent, accurate responses
-                max_tokens=2000   # Significantly increased token limit for comprehensive responses
+                max_tokens=2000   # Increased token limit for comprehensive responses
             )
             
             response = completion.choices[0].message.content.strip()
